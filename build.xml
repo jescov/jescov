@@ -14,16 +14,16 @@
   </path>
 
   <path id="build.main.classpath">
-    <path refix="libs.classpath"/>
+    <path refid="libs.classpath"/>
   </path>
 
   <path id="build.test.classpath">
-    <path refix="libs.classpath"/>
+    <path refid="libs.classpath"/>
     <pathelement path="${main.classes.dir}"/>
   </path>
 
   <path id="test.classpath">
-    <path refix="libs.classpath"/>
+    <path refid="libs.classpath"/>
     <pathelement path="${main.classes.dir}"/>
     <pathelement path="${test.classes.dir}"/>
   </path>
@@ -50,7 +50,7 @@
     <filter token="VERSION_NUMBER" value="${jescov.version}"/>
     <filter token="VERSION_STRING" value="JesCov ${jescov.version}"/>
 
-    <javac destdir="${main.classes.dir}" source="${javac.version}" target="${javac.version}" debug="true" encoding="UTF-8">
+    <javac destdir="${main.classes.dir}" source="${javac.version}" target="${javac.version}" debug="true" encoding="UTF-8" includeantruntime="false">
       <classpath refid="build.main.classpath"/>
       <src path="${src.dir}"/>
       <include name="**/*.java"/>
@@ -62,7 +62,7 @@
   </target>
 
   <target name="compile-tests" depends="compile" description="Compile the test source files for the project.">
-    <javac destdir="${test.classes.dir}" debug="true" source="${javac.version}" target="${javac.version}" encoding="UTF-8">
+    <javac destdir="${test.classes.dir}" debug="true" source="${javac.version}" target="${javac.version}" encoding="UTF-8" includeantruntime="false">
       <classpath refid="build.test.classpath"/>
       <src path="${src.test.dir}"/>
       <include name="**/*.java"/>
