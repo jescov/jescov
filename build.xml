@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project basedir="." default="jar" name="jescov">
+  <description>
+    JesCov collects coverage information for your JavaScript project
+  </description>
+
+  <property file="build.properties"/>
+  <property file="default.build.properties"/>
+  <property file="version.properties"/>
+
+  <path id="libs.classpath">
+    <fileset dir="${lib.dir}" includes="*.jar"/>
+  </path>
+
+  <path id="build.main.classpath">
+    <path refix="libs.classpath"/>
+  </path>
+
+  <path id="build.test.classpath">
+    <path refix="libs.classpath"/>
+    <pathelement path="${main.classes.dir}"/>
+  </path>
+
+  <path id="test.classpath">
+    <path refix="libs.classpath"/>
+    <pathelement path="${main.classes.dir}"/>
+    <pathelement path="${test.classes.dir}"/>
+  </path>
+
+  <target name="prepare" description="Creates the directories needed for building">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${main.classes.dir}"/>
+    <mkdir dir="${test.classes.dir}"/>
+    <mkdir dir="${test.results.dir}"/>
+    <mkdir dir="${html.test.results.dir}"/>
+  </target>
+
+  <target name="compile" depends="prepare" description="Compile the source files for the project.">
+    <tstamp>
+      <format property="build.time" pattern="yyyy-MM-dd hh:mm"/>
+    </tstamp>
+
+    <exec executable="git" outputproperty="jescov.revision" failonerror="false" failifexecutionfails="false">
+      <arg line="log -1 --format=format:%h"/>
+    </exec>
+
+    <filter token="DATE" value="${build.time}"/>
+    <filter token="COMMIT" value="${jescov.revision}"/>
+    <filter token="VERSION_NUMBER" value="${jescov.version}"/>
+    <filter token="VERSION_STRING" value="JesCov ${jescov.version}"/>
+
+    <javac destdir="${main.classes.dir}" source="${javac.version}" target="${javac.version}" debug="true" encoding="UTF-8">
+      <classpath refid="build.main.classpath"/>
+      <src path="${src.dir}"/>
+      <include name="**/*.java"/>
+    </javac>
+
+    <copy todir="${main.classes.dir}" filtering="true" overwrite="true">
+      <fileset dir="${src.dir}" includes="**/*.properties"/>
+    </copy>
+  </target>
+
+  <target name="compile-tests" depends="compile" description="Compile the test source files for the project.">
+    <javac destdir="${test.classes.dir}" debug="true" source="${javac.version}" target="${javac.version}" encoding="UTF-8">
+      <classpath refid="build.test.classpath"/>
+      <src path="${src.test.dir}"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
+  <target name="test" depends="compile-tests" description="Runs all Seph tests">
+    <junit fork="yes" forkMode="once" failureproperty="junit.failure" showoutput="true" timeout="1800000">
+      <jvmarg value="-ea"/>
+      <classpath refid="test.classpath"/>
+      <sysproperty key="file.encoding" value="UTF-8"/>
+      <formatter type="brief" usefile="false" />
+
+      <batchtest fork="yes">
+        <fileset dir="${src.test.dir}">
+          <include name="**/*Test*.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+    <fail if="junit.failure" message="Test(s) failed."/>
+  </target>
+
+  <target name="jar" depends="test" description="Create the jescov.jar file">
+    <jar destfile="${lib.dir}/jescov-${jescov.version}.jar">
+      <fileset dir="${main.classes.dir}">
+        <include name="**/*.class"/>
+        <include name="**/*.properties"/>
+      </fileset>
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Main-Class" value="com.olabini.jescov.console.Runner"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="clean" description="clean almost everything">
+    <delete dir="${build.dir}"/>
+  </target>
+</project>

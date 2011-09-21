@@ -1,0 +1,34 @@
+JesCov is a tool that makes it possible to find out coverage
+information for your JavaScript. It uses Rhino for this. There are a
+few different ways of getting coverage information for JavaScript
+today, but none of them is very convenient. Two frameworks (JSCoverage
+and JSChiliCat) binds you to a specific test framework. Both
+JSCoverage and js-test-driver works by instrumenting the code before
+running the code.
+
+The goal I want to solve with this project is to generate accurate
+coverage information that can easily set up and invoked from inside of
+a CI build. I don't need it to run inside of a browser to get coverage
+infrmation about my unit tests, so running headlessly works fine. I
+also don't want to introduce a separate step of instrumenting the code
+I run - or set up a server for this part. In short, finding out
+coverage for JavaScript should be as easy as doing it for Java -
+probably easier.
+
+This project will contain the pieces necessary to figure out coverage
+information for any JavaScript that can run in Rhino - it is not
+constrained to code running under test, although I suspect that will
+be the most common usecase. JesCov will collect coverage information,
+it will allow you to exclude or include which files to cover. It will
+be able to generate XML or HTML reports with highlighted source
+code. It is an ambition that the project will be able to give you both
+line and branch coverage. It will also be able to run arbitrary
+JavaScript from the command line while collecting coverage
+information.
+
+A companion project for this will be a small extension to the Jasmine
+JUnit runner that will allow you to turn on collection of coverage
+information while running your Jasmine specs. This is however not
+something that should be part of the main source for this project. As
+mentioned above, this project aims to provide coverage information
+irrespective of testing framework.

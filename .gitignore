@@ -1,0 +1,6 @@
+.DS_Store
+/build
+prj.el
+build.properties
+/.idea
+*.iml
