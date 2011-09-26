@@ -4,3 +4,5 @@ prj.el
 build.properties
 /.idea
 *.iml
+/out
+lib/jescov*.jar
