@@ -11,7 +11,7 @@ public class Coverage {
     Coverage(Context context, Scriptable scope) {
         this.context = context;
         this.scope = scope;
-        this.coverageDebugger = new CoverageDebugger(nameMapper, coverageRewriter);
+        this.coverageDebugger = new CoverageDebugger(context);
     }
 
     public static Coverage on(Context ctx, Scriptable scope) {
@@ -27,6 +27,10 @@ public class Coverage {
     }
 
     public void done() {
-        coverageDebugger.reportCoverage(scope);
+        coverageDebugger.generateCoverageData(scope);
+    }
+
+    public CoverageData getCoverageData() {
+        return coverageDebugger.getCoverageData();
     }
 }

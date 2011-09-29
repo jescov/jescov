@@ -6,3 +6,4 @@ build.properties
 *.iml
 /out
 lib/jescov*.jar
+src/gen

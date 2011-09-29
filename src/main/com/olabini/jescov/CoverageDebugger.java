@@ -3,18 +3,11 @@
  */
 package com.olabini.jescov;
 
-import com.google.jstestdriver.coverage.Code;
-import com.google.jstestdriver.coverage.CodeInstrumentor;
-import com.google.jstestdriver.coverage.CoverageNameMapper;
-import com.google.jstestdriver.coverage.InstrumentedCode;
 import org.mozilla.javascript.*;
 import org.mozilla.javascript.debug.Debugger;
 import org.mozilla.javascript.debug.DebuggableScript;
 import org.mozilla.javascript.debug.DebugFrame;
 
-import javax.xml.ws.handler.MessageContext;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.*;
 
 public class CoverageDebugger implements Debugger {
@@ -50,16 +43,36 @@ public class CoverageDebugger implements Debugger {
         }
     }
 
-    void reportCoverage(Scriptable scope) {
-        Map<String, Map<Integer, Integer>> coverageResults = new HashMap<String, Map<Integer, Integer>>();
+    private CoverageData coverageData;
+
+    void generateCoverageData(Scriptable scope) {
+        Map<String, Map<Integer, LineCoverage>> coverageResults = new HashMap<String, Map<Integer, LineCoverage>>();
+        Map<String, Map<Integer, BranchCoverage>> coverageResults2 = new HashMap<String, Map<Integer, BranchCoverage>>();
         NativeArray na = (NativeArray)(((Scriptable)scope.get("LCOV", scope)).get("collectedCoverageData", scope));
         for(Object coverage : na) {
-            reportSingleCoverage((Scriptable) coverage, scope, coverageResults);
+            generateLineCoverage((Scriptable) coverage, scope, coverageResults);
         }
+        NativeArray na2 = (NativeArray)(((Scriptable)scope.get("BCOV", scope)).get("collectedCoverageData", scope));
+        for(Object coverage : na2) {
+            generateBranchCoverage((Scriptable) coverage, scope, coverageResults2);
+        }
+
+        Set<String> allFileNames = new HashSet<String>();
+        allFileNames.addAll(coverageResults.keySet());
+        allFileNames.addAll(coverageResults2.keySet());
+        List<FileCoverage> result = new ArrayList<FileCoverage>();
+        for(String fileName : allFileNames) {
+            Map<Integer, LineCoverage> lineCoverage = coverageResults.get(fileName);
+            Map<Integer, BranchCoverage> branchCoverage = coverageResults2.get(fileName);
+            result.add(new FileCoverage(fileName,
+                    lineCoverage == null ? Collections.<LineCoverage>emptySet() : lineCoverage.values(),
+                    branchCoverage == null ? Collections.<BranchCoverage>emptySet() : branchCoverage.values()));
+        }
+        coverageData = new CoverageData(result);
     }
 
-    private void reportSingleCoverage(Scriptable coverage, Scriptable scope, Map<String, Map<Integer, Integer>> coverageResults) {
-        Map<Integer, Integer> lineResults = new HashMap<Integer, Integer>();
+    private void generateLineCoverage(Scriptable coverage, Scriptable scope, Map<String, Map<Integer, LineCoverage>> coverageResults) {
+        Map<Integer, LineCoverage> lineResults = new HashMap<Integer, LineCoverage>();
         int functionId = (int)Context.toNumber(coverage.get("functionId", scope));
         String filename = nameMapper.unmap(functionId);
         coverageResults.put(filename, lineResults);
@@ -67,7 +80,27 @@ public class CoverageDebugger implements Debugger {
         for(Object o : availableLines) {
             int line = (int)Context.toNumber(o);
             int hits = (int)Context.toNumber(coverage.get(line, scope));
-            lineResults.put(line, hits);
+            lineResults.put(line, new LineCoverage(line, hits));
         }
+    }
+
+    private void generateBranchCoverage(Scriptable coverage, Scriptable scope, Map<String, Map<Integer, BranchCoverage>> coverageResults) {
+        Map<Integer, BranchCoverage> branchResults = new HashMap<Integer, BranchCoverage>();
+        int functionId = (int)Context.toNumber(coverage.get("functionId", scope));
+        String filename = nameMapper.unmap(functionId);
+        coverageResults.put(filename, branchResults);
+        List<?> availableLines = (NativeArray)coverage.get("foundBranches", scope);
+        for(Object o : availableLines) {
+            int line = (int)Context.toNumber(((List)o).get(0));
+            int branch = (int)Context.toNumber(((List)o).get(1));
+            Object cov = coverage.get(branch, scope);
+            int negative = (int)Context.toNumber(((List)cov).get(0));
+            int positive = (int)Context.toNumber(((List)cov).get(1));
+            branchResults.put(line, new BranchCoverage(line, branch, negative, positive));
+        }
+    }
+
+    public CoverageData getCoverageData() {
+        return coverageData;
     }
 }// CoverageDebugger

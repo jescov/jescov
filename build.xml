@@ -10,7 +10,7 @@
   <property file="version.properties"/>
 
   <path id="libs.classpath">
-    <fileset dir="${lib.dir}" includes="*.jar"/>
+    <fileset dir="${lib.dir}" includes="*.jar" excludes="jescov*.jar"/>
   </path>
 
   <path id="build.main.classpath">
@@ -34,9 +34,20 @@
     <mkdir dir="${test.classes.dir}"/>
     <mkdir dir="${test.results.dir}"/>
     <mkdir dir="${html.test.results.dir}"/>
+    <mkdir dir="${src.gen.dir}"/>
   </target>
 
-  <target name="compile" depends="prepare" description="Compile the source files for the project.">
+  <target name="generate-grammer" depends="prepare">
+    <mkdir dir="${src.gen.dir}" />
+    <java jar="${lib.dir}/antlr-3.1.3.jar" fork="true" dir="${src.dir}">
+      <arg value="-make" />
+      <arg value="-o" />
+      <arg value="../gen" />
+      <arg value="com/olabini/jescov/es3/ES3Instrument.g" />
+    </java>
+  </target>
+
+  <target name="compile" depends="generate-grammer" description="Compile the source files for the project.">
     <tstamp>
       <format property="build.time" pattern="yyyy-MM-dd hh:mm"/>
     </tstamp>
@@ -53,11 +64,12 @@
     <javac destdir="${main.classes.dir}" source="${javac.version}" target="${javac.version}" debug="true" encoding="UTF-8" includeantruntime="false">
       <classpath refid="build.main.classpath"/>
       <src path="${src.dir}"/>
+      <src path="${src.gen.dir}"/>
       <include name="**/*.java"/>
     </javac>
 
     <copy todir="${main.classes.dir}" filtering="true" overwrite="true">
-      <fileset dir="${src.dir}" includes="**/*.properties"/>
+      <fileset dir="${src.dir}" includes="**/*.properties,**/*.js"/>
     </copy>
   </target>
 
@@ -90,6 +102,7 @@
       <fileset dir="${main.classes.dir}">
         <include name="**/*.class"/>
         <include name="**/*.properties"/>
+        <include name="**/*.js"/>
       </fileset>
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
