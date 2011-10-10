@@ -10,4 +10,19 @@ Feature: Simple function line coverage
       |        0 |   return 0;     |
       |          | }               |
 
+  Scenario: Function that is called once
+    * I get the following line coverage for the JavaScript: 
+      | coverage | code            |
+      |        1 | function t1() { |
+      |        1 |   return 0;     |
+      |          | }               |
+      |        1 | t1();           |
+
+  Scenario: Function that is called several times
+    * I get the following line coverage for the JavaScript: 
+      | coverage | code                    |
+      |        1 | function t1() {         |
+      |        4 |   return 0;             |
+      |          | }                       |
+      |        1 | t1(); t1(); t1(); t1(); |
 
