@@ -12,4 +12,8 @@ public class LineCoverage {
     public int getLine() {
         return this.line;
     }
+
+    public int getHits() {
+        return this.hits;
+    }
 }

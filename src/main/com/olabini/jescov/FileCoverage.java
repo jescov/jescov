@@ -42,6 +42,10 @@ public class FileCoverage {
         return branchCoverage.get(line);
     }
 
+    public LineCoverage getLineCoverageFor(Integer line) {
+        return lineCoverage.get(line);
+    }
+
     public String getFilename() {
         return filename;
     }
