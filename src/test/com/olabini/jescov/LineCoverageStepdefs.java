@@ -46,4 +46,15 @@ public class LineCoverageStepdefs {
             }
         }
     }
+
+    @Then("^I get the following line coverage for the JavaScript:$")
+    public void I_get_the_following_line_coverage_for_the_JavaScript_(List<LineExpectation> expectations) {
+        JavaScriptStepdefs jss = new JavaScriptStepdefs(data);
+        StringBuilder jsCode = new StringBuilder();
+        for(LineExpectation le : expectations) {
+            jsCode.append(le.code).append("\n");
+        }
+        jss.I_execute_this_JavaScript(jsCode.toString());
+        the_line_coverage_is_this(expectations);
+    }
 }// LineCoverageStepdefs
