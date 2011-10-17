@@ -28,9 +28,12 @@ public class BranchCoverageMatcher extends TypeSafeMatcher<CoverageData> {
     @Override
     protected boolean matchesSafely(CoverageData cd) {
         bcs = cd.getFileCoverageFor("<test input>").getBranchCoverageFor(line);
-        for(BranchCoverage bc : bcs) {
-            if((positive ? bc.getPositiveBranch() : bc.getNegativeBranch()) == expected) {
-                return true;
+
+        if(bcs != null) {
+            for(BranchCoverage bc : bcs) {
+                if((positive ? bc.getPositiveBranch() : bc.getNegativeBranch()) == expected) {
+                    return true;
+                }
             }
         }
 

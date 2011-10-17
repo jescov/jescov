@@ -23,6 +23,7 @@ public class CodeInstrumentor {
        "instrument(stmt, hash, ln) ::= \"LCOV_<hash>[<ln>]++; <stmt>\"" +
        "instrument_if(conditional, left, right, hash, bid) ::= \"if(((<conditional>) || BCOV_<hash>.branchFalseInc(<bid>)) && BCOV_<hash>.branchTrueInc(<bid>)) <left> <right>\"" +
        "instrument_qif(conditional, left, right, hash, bid) ::= \"(((<conditional>) || BCOV_<hash>.branchFalseInc(<bid>)) && BCOV_<hash>.branchTrueInc(<bid>)) ? <left> : <right>\"" +
+       "instrument_while(conditional, stmt, hash, bid) ::= \"while(((<conditional>) || BCOV_<hash>.branchFalseInc(<bid>)) && BCOV_<hash>.branchTrueInc(<bid>)) <stmt>\"" +
        "pass(stmt) ::= \"<stmt>\"").toCharArray();
 
 

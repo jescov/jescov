@@ -1335,10 +1335,18 @@ doStatement
 	;
 	
 whileStatement
+@init{
+        boolean instrument = true;
+        int bid = $program::branches++;
+}
+@after {
+        if (instrument) {
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+        }
+}
 	: WHILE LPAREN expression RPAREN statement
-	-> template(pre = {input.toString($start.getTokenIndex(), $statement.start.getTokenIndex() - 1)},
-	            stmt = {wrapInBraces($statement.start, $statement.stop, input)}
-	            ) "<pre><stmt>"
+	-> {instrument}? instrument_while(conditional = {$expression.text}, stmt = {$statement.text}, hash = {$program::hash}, bid = {bid})
+    -> pass(stmt = {$text})
 	;
 
 /*
