@@ -1,0 +1,6 @@
+- JasmineCoverageTestRunner
+  - Uses the above project,
+  - Creates a subclass of JasmineTestRunner that can be asked to generate coverage too
+  - Only generates coverage if a specific system property is set, otherwise does the same
+    thing as the super class
+- Look at the V8 debugger protocol
