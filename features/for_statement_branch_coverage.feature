@@ -56,7 +56,7 @@ Feature: Branch coverage of for statement
     When I execute this JavaScript:
       """
       function t1(res) {
-        for(var x=0;x<res;res++) {
+        for(var x=0;x<res;x++) {
         }
       }
       """
@@ -67,7 +67,7 @@ Feature: Branch coverage of for statement
     When I execute this JavaScript:
       """
       function t1(res) {
-        for(var x=0;x<res;res++) {
+        for(var x=0;x<res;x++) {
         }
       }
       t1(0);
@@ -79,7 +79,7 @@ Feature: Branch coverage of for statement
     When I execute this JavaScript:
       """
       function t1(res) {
-        for(var x=0;x<res;res++) {
+        for(var x=0;x<res;x++) {
         }
       }
       t1(1);
@@ -91,7 +91,7 @@ Feature: Branch coverage of for statement
     When I execute this JavaScript:
       """
       function t1(res) {
-        for(var x=0;x<res;res++) {
+        for(var x=0;x<res;x++) {
         }
       }
       t1(4);
