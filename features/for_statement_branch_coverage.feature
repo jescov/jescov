@@ -3,7 +3,51 @@ Feature: Branch coverage of for statement
   As a developer
   I want to see the branch coverage of my for statements
 
-  Scenario: for statement that is never hit
-  Scenario: for statement where the condition is never true
-  Scenario: for statement where the condition is true once
-  Scenario: for statement where the condition is true more than once
+  Scenario: for-in statement that is never hit
+    When I execute this JavaScript:
+      """
+      function t1(res) {
+        for(var x in res) {
+        }
+      }
+      """
+    Then the positive branch coverage on line 2 should be 0
+    And the negative branch coverage on line 2 should be 0
+
+  Scenario: for-in statement where the condition is never true
+    When I execute this JavaScript:
+      """
+      function t1(res) {
+        for(var x in res) {
+        }
+      }
+      t1({});
+      """
+    Then the negative branch coverage on line 2 should be 1
+    And the positive branch coverage on line 2 should be 0
+
+  Scenario: for-in statement where the condition is true once
+    When I execute this JavaScript:
+      """
+      function t1(res) {
+        for(var x in res) {
+        }
+      }
+      t1({foo: 43});
+      """
+    Then the positive branch coverage on line 2 should be 1
+    And the negative branch coverage on line 2 should be 1
+
+  Scenario: for-in statement where the condition is true more than once
+    When I execute this JavaScript:
+      """
+      function t1(res) {
+        for(var x in res) {
+        }
+      }
+      t1({foo: 43, fox: 15, bar: 1});
+      t1({foo: 43});
+      t1({});
+      """
+    Then the positive branch coverage on line 2 should be 4
+    And the negative branch coverage on line 2 should be 3

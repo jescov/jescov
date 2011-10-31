@@ -1391,10 +1391,18 @@ Furthermore backtracking seemed to have 3 major drawbacks:
 - when introducing a k value to optimize the backtracking away, ANTLR runs out of heap space
 */
 forStatement
+@init{
+        boolean instrument = true;
+        int bid = $program::branches++;
+}
+@after {
+        if (instrument) {
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+        }
+}
 	: FOR LPAREN forControl RPAREN statement
-	  -> template(pre = {input.toString($start.getTokenIndex(), $statement.start.getTokenIndex() - 1)},
-	              stmt = {wrapInBraces($statement.start, $statement.stop, input)}
-	              ) "<pre><stmt>"
+      -> {instrument}? instrument_for(pre = {input.toString($start.getTokenIndex(), $statement.start.getTokenIndex() - 1)}, stmt = {$statement.text}, hash = {$program::hash}, bid = {bid})
+      -> pass(stmt = {$text})
 	;
 
 forControl
