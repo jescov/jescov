@@ -1047,7 +1047,18 @@ bitwiseORExpressionNoIn
 // $<Binary logical operators (11.11)
 
 logicalANDExpression
-	: bitwiseORExpression ( LAND bitwiseORExpression )*
+@init{
+        boolean instrumented = false;
+        int bid = $program::branches++;
+}
+@after {
+        if (instrumented) {
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+        }
+}
+	: left=bitwiseORExpression ( LAND right=bitwiseORExpression )*
+	  -> {$right.text != null && (instrumented=true)}? instrument_and(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid})
+	  -> pass(stmt={$text})
 	;
 
 logicalANDExpressionNoIn
