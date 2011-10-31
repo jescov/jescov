@@ -87,7 +87,7 @@ Feature: Branch coverage of short circuiting and expression
   #   When I execute this JavaScript:
   #     """
   #     function t1(res) {
-  #       return res && 42 && false;
+  #       return res && false && 42;
   #     }
   #     t1(false);
   #     t1(false);
