@@ -47,7 +47,7 @@ public class CoverageDebugger implements Debugger {
 
     void generateCoverageData(Scriptable scope) {
         Map<String, Map<Integer, LineCoverage>> coverageResults = new HashMap<String, Map<Integer, LineCoverage>>();
-        Map<String, Map<Integer, BranchCoverage>> coverageResults2 = new HashMap<String, Map<Integer, BranchCoverage>>();
+        Map<String, Collection<BranchCoverage>> coverageResults2 = new HashMap<String, Collection<BranchCoverage>>();
         NativeArray na = (NativeArray)(((Scriptable)scope.get("LCOV", scope)).get("collectedCoverageData", scope));
         for(Object coverage : na) {
             generateLineCoverage((Scriptable) coverage, scope, coverageResults);
@@ -63,10 +63,10 @@ public class CoverageDebugger implements Debugger {
         List<FileCoverage> result = new ArrayList<FileCoverage>();
         for(String fileName : allFileNames) {
             Map<Integer, LineCoverage> lineCoverage = coverageResults.get(fileName);
-            Map<Integer, BranchCoverage> branchCoverage = coverageResults2.get(fileName);
+            Collection<BranchCoverage> branchCoverage = coverageResults2.get(fileName);
             result.add(new FileCoverage(fileName,
                     lineCoverage == null ? Collections.<LineCoverage>emptySet() : lineCoverage.values(),
-                    branchCoverage == null ? Collections.<BranchCoverage>emptySet() : branchCoverage.values()));
+                    branchCoverage == null ? Collections.<BranchCoverage>emptySet() : branchCoverage));
         }
         coverageData = new CoverageData(result);
     }
@@ -84,8 +84,8 @@ public class CoverageDebugger implements Debugger {
         }
     }
 
-    private void generateBranchCoverage(Scriptable coverage, Scriptable scope, Map<String, Map<Integer, BranchCoverage>> coverageResults) {
-        Map<Integer, BranchCoverage> branchResults = new HashMap<Integer, BranchCoverage>();
+    private void generateBranchCoverage(Scriptable coverage, Scriptable scope, Map<String, Collection<BranchCoverage>> coverageResults) {
+        Collection<BranchCoverage> branchResults = new LinkedList<BranchCoverage>();
         int functionId = (int)Context.toNumber(coverage.get("functionId", scope));
         String filename = nameMapper.unmap(functionId);
         coverageResults.put(filename, branchResults);
@@ -96,7 +96,7 @@ public class CoverageDebugger implements Debugger {
             Object cov = coverage.get(branch, scope);
             int negative = (int)Context.toNumber(((List)cov).get(0));
             int positive = (int)Context.toNumber(((List)cov).get(1));
-            branchResults.put(line, new BranchCoverage(line, branch, negative, positive));
+            branchResults.add(new BranchCoverage(line, branch, negative, positive));
         }
     }
 

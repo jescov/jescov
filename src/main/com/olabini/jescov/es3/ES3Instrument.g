@@ -1056,7 +1056,7 @@ logicalANDExpression
            $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
         }
 }
-	: left=bitwiseORExpression ( LAND right=bitwiseORExpression )*
+	: left=bitwiseORExpression ( LAND right=bitwiseORExpression )?
 	  -> {$right.text != null && (instrumented=true)}? instrument_and(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid})
 	  -> pass(stmt={$text})
 	;

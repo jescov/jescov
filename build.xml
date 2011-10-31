@@ -81,7 +81,7 @@
     </javac>
   </target>
 
-  <target name="test" depends="compile-tests" description="Runs all Seph tests">
+  <target name="test" depends="compile-tests" description="Runs all tests">
     <junit fork="yes" forkMode="once" failureproperty="junit.failure" showoutput="true" timeout="1800000">
       <jvmarg value="-ea"/>
       <classpath refid="test.classpath"/>
@@ -91,6 +91,22 @@
       <batchtest fork="yes">
         <fileset dir="${src.test.dir}">
           <include name="**/*Test*.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+    <fail if="junit.failure" message="Test(s) failed."/>
+  </target>
+
+  <target name="test-specific" depends="compile-tests" description="Runs a specific test">
+    <junit fork="yes" forkMode="once" failureproperty="junit.failure" showoutput="true" timeout="1800000">
+      <jvmarg value="-ea"/>
+      <classpath refid="test.classpath"/>
+      <sysproperty key="file.encoding" value="UTF-8"/>
+      <formatter type="brief" usefile="false" />
+
+      <batchtest fork="yes">
+        <fileset dir="${src.test.dir}">
+          <include name="**/short_circuiting_and_*Test*.java"/>
         </fileset>
       </batchtest>
     </junit>
