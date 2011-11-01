@@ -1086,9 +1086,8 @@ logicalORExpression
            $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
         }
 }
-	: left=logicalANDExpression ( LOR right=logicalANDExpression )*
-	  -> {$right.text != null && (instrumented=true)}? instrument_or(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid})
-	  -> pass(stmt={$text})
+	: (logicalANDExpression LOR) => (left=logicalANDExpression LOR right=logicalORExpression -> {(instrumented=true)}? instrument_or(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid}) -> pass(stmt={$text}))
+    | (logicalANDExpression -> pass(stmt={$text}))
 	;
 	
 logicalORExpressionNoIn
@@ -1101,9 +1100,8 @@ logicalORExpressionNoIn
            $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
         }
 }
-	: left=logicalANDExpressionNoIn ( LOR right=logicalANDExpressionNoIn )*
-	  -> {$right.text != null && (instrumented=true)}? instrument_or(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid})
-	  -> pass(stmt={$text})
+	: (logicalANDExpressionNoIn LOR) => (left=logicalANDExpressionNoIn LOR right=logicalORExpressionNoIn -> {(instrumented=true)}? instrument_or(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid}) -> pass(stmt={$text}))
+    | (logicalANDExpressionNoIn -> pass(stmt={$text}))
 	;
 
 // $>
