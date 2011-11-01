@@ -45,6 +45,7 @@ var BCOV = (function() {
 
               function initNoop(functionId, foundBranches) {
                 var coverage = {functionId: functionId, foundBranches: foundBranches};
+                coverage['branchInc'] = branchInc(coverage);
                 coverage['branchFalseInc'] = branchFalseInc(coverage);
                 coverage['branchTrueInc'] = branchTrueInc(coverage);
                 collectedCoverageData.push(coverage);

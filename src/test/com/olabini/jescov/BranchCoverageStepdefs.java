@@ -4,6 +4,7 @@
 package com.olabini.jescov;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static com.olabini.jescov.matchers.BranchCoverageMatcher.hasBranchCoverage;
 import static com.olabini.jescov.matchers.BranchCoverageMatcher.hasNegativeBranchCoverage;
 import static com.olabini.jescov.matchers.BranchCoverageMatcher.hasPositiveBranchCoverage;
 
@@ -24,5 +25,10 @@ public class BranchCoverageStepdefs {
     @Then("^the positive branch coverage on line (\\d+) should be (\\d+)$")
     public void the_positive_branch_coverage_on_line_should_be_(int line, int expectedCoverage) {
         assertThat(data.getCoverageData(), hasPositiveBranchCoverage(expectedCoverage).onLine(line));
+    }
+
+    @Then("^the branch coverage on line (\\d+) should be (\\d+) on axis (\\d+)$")
+    public void the_positive_branch_coverage_on_line_should_be_(int line, int expectedCoverage, int axis) {
+        assertThat(data.getCoverageData(), hasBranchCoverage(expectedCoverage).onLine(line).onAxis(axis));
     }
 }// BranchCoverageStepdefs

@@ -10,17 +10,15 @@ import java.util.Collection;
 
 public class BranchCoverageMatcher extends TypeSafeMatcher<CoverageData> {
     private final int expected;
-    private final boolean positive;
+    private final boolean binary;
+    private final Integer axis;
     private final Integer line;
 
-    public BranchCoverageMatcher(int expected, boolean positive) {
-        this(expected, positive, null);
-    }
-
-    public BranchCoverageMatcher(int expected, boolean positive, Integer line) {
+    public BranchCoverageMatcher(int expected, boolean binary, Integer axis, Integer line) {
         this.expected = expected;
-        this.positive = positive;
+        this.binary = binary;
         this.line = line;
+        this.axis = axis;
     }
 
     private Collection<BranchCoverage> bcs;
@@ -31,7 +29,7 @@ public class BranchCoverageMatcher extends TypeSafeMatcher<CoverageData> {
 
         if(bcs != null) {
             for(BranchCoverage bc : bcs) {
-                if((positive ? bc.getPositiveBranch() : bc.getNegativeBranch()) == expected) {
+                if(bc.getBranches()[axis] == expected) {
                     return true;
                 }
             }
@@ -41,7 +39,7 @@ public class BranchCoverageMatcher extends TypeSafeMatcher<CoverageData> {
     }
 
     public void describeTo(Description description) {
-        String type = positive ? "positive" : "negative";
+        String type = binary ? (0 == axis.intValue() ? "positive" : "negative") : "axis " + axis;
         description.appendText("didn't have branch coverage[" + type + "=" + expected +"] on line " + line);
     }
 
@@ -51,14 +49,22 @@ public class BranchCoverageMatcher extends TypeSafeMatcher<CoverageData> {
     }
 
     public BranchCoverageMatcher onLine(int line) {
-        return new BranchCoverageMatcher(expected, positive, line);
+        return new BranchCoverageMatcher(expected, binary, axis, line);
+    }
+
+    public BranchCoverageMatcher onAxis(int axis) {
+        return new BranchCoverageMatcher(expected, false, axis, line);
+    }
+
+    public static BranchCoverageMatcher hasBranchCoverage(int expected) {
+        return new BranchCoverageMatcher(expected, false, null, null);
     }
 
     public static BranchCoverageMatcher hasNegativeBranchCoverage(int expected) {
-        return new BranchCoverageMatcher(expected, false);
+        return new BranchCoverageMatcher(expected, true, 0, null);
     }
 
     public static BranchCoverageMatcher hasPositiveBranchCoverage(int expected) {
-        return new BranchCoverageMatcher(expected, true);
+        return new BranchCoverageMatcher(expected, true, 1, null);
     }
 }

@@ -1557,19 +1557,32 @@ withStatement
 switchStatement
 @init
 {
+    int caseCount = 0;
 	int defaultClauseCount = 0;
+    int bid = $program::branches++;
 }
-	: SWITCH LPAREN expression RPAREN LBRACE ( { defaultClauseCount == 0 }?=> defaultClause { defaultClauseCount++; } | caseClause )* RBRACE
-	//-> ^( SWITCH expression defaultClause? caseClause* )
+@after
+{
+    $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid, caseCount));
+}
+	: SWITCH LPAREN expression RPAREN LBRACE ( { defaultClauseCount == 0 }?=> defaultClause[caseCount++,bid] { defaultClauseCount++; } | caseClause[caseCount++,bid] )* RBRACE
 	;
 
-caseClause
-	: CASE expression COLON statement*
+caseClause[int branchNum, int bid]
+	: CASE expression COLON zeroOrMoreStatements
+        -> instrument_case(expr = {$expression.text}, stmt = {$zeroOrMoreStatements.text}, hash = {$program::hash}, bid = {bid}, branchNum = {branchNum})
 	;
 	
-defaultClause
-	: DEFAULT COLON statement*
+defaultClause[int branchNum, int bid]
+	: DEFAULT COLON zeroOrMoreStatements
+        -> instrument_default(stmt = {$zeroOrMoreStatements.text}, hash = {$program::hash}, bid = {bid}, branchNum = {branchNum})
 	;
+
+
+zeroOrMoreStatements
+    :
+      statement*
+    ;
 
 // $>
 	

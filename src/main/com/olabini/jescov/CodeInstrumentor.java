@@ -27,6 +27,8 @@ public class CodeInstrumentor {
        "instrument_for(pre, stmt, hash, bid) ::= \"BCOV_<hash>.branchFalseInc(<bid>);<pre> {BCOV_<hash>.branchTrueInc(<bid>); <stmt> }\"" +
        "instrument_and(left, right, hash, bid) ::= \"((BCOV_var_<hash>_<bid>=<left>) || BCOV_<hash>.branchFalseInc(<bid>) || BCOV_var_<hash>_<bid>) && BCOV_<hash>.branchTrueInc(<bid>) && <right>\"" +
        "instrument_or(left, right, hash, bid) ::= \"(((BCOV_var_<hash>_<bid>=<left>) && BCOV_<hash>.branchTrueInc(<bid>) && BCOV_var_<hash>_<bid>) || BCOV_<hash>.branchFalseInc(<bid>)) || <right>\"" +
+       "instrument_case(expr, stmt, hash, bid, branchNum) ::= \"case <expr>: BCOV_<hash>.branchInc(<bid>, <branchNum>, true); <stmt>\"" +
+       "instrument_default(stmt, hash, bid, branchNum) ::= \"default: BCOV_<hash>.branchInc(<bid>, <branchNum>, true); <stmt>\"" +
        "pass(stmt) ::= \"<stmt>\"").toCharArray();
 
 
