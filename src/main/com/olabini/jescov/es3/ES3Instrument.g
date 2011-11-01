@@ -1056,9 +1056,9 @@ logicalANDExpression
            $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
         }
 }
-	: left=bitwiseORExpression ( LAND right=bitwiseORExpression )*
-	  -> {$right.text != null && (instrumented=true)}? instrument_and(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid})
-	  -> pass(stmt={$text})
+	: 
+        (bitwiseORExpression LAND) => (left=bitwiseORExpression LAND right=logicalANDExpression  -> {(instrumented=true)}? instrument_and(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid}) -> pass(stmt={$text}))
+    |   (bitwiseORExpression                                       -> pass(stmt={$text}))
 	;
 
 logicalANDExpressionNoIn
@@ -1071,9 +1071,9 @@ logicalANDExpressionNoIn
            $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
         }
 }
-	: left=bitwiseORExpressionNoIn ( LAND right=bitwiseORExpressionNoIn )*
-	  -> {$right.text != null && (instrumented=true)}? instrument_and(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid})
-	  -> pass(stmt={$text})
+	: 
+        (bitwiseORExpressionNoIn LAND) => (left=bitwiseORExpressionNoIn LAND right=logicalANDExpressionNoIn  -> {(instrumented=true)}? instrument_and(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid}) -> pass(stmt={$text}))
+    |   (bitwiseORExpressionNoIn                                       -> pass(stmt={$text}))
 	;
 	
 logicalORExpression
