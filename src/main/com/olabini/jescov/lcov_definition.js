@@ -22,6 +22,13 @@ var LCOV = (function() {
 var BCOV = (function() {
               var collectedCoverageData = [];
 
+              function branchInc(coverage) {
+                return function(branchId, ix, ret) {
+                  coverage[branchId][ix]++;
+                  return ret;
+                };
+              }
+
               function branchFalseInc(coverage) {
                 return function(branchId) {
                   coverage[branchId][0]++;
@@ -42,7 +49,11 @@ var BCOV = (function() {
                 coverage['branchTrueInc'] = branchTrueInc(coverage);
                 collectedCoverageData.push(coverage);
                 for(var i = 0; i < foundBranches.length; i++) {
-                  coverage[foundBranches[i][1]] = [0, 0];
+                  var arr = [];
+                  for(var j = 0; j < foundBranches[i][2]; j++) {
+                    arr.push(0);
+                  }
+                  coverage[foundBranches[i][1]] = arr;
                 }
                 return coverage;
               }

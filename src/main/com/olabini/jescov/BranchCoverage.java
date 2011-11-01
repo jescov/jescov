@@ -1,16 +1,16 @@
 package com.olabini.jescov;
 
+import java.util.Arrays;
+
 public class BranchCoverage {
     private final int line;
     private final int branchId;
-    private final int negativeBranch;
-    private final int positiveBranch;
+    private final int[] branches;
 
-    public BranchCoverage(int line, int branchId, int negativeBranch, int positiveBranch) {
+    public BranchCoverage(int line, int branchId, int[] branches) {
         this.line = line;
         this.branchId = branchId;
-        this.negativeBranch = negativeBranch;
-        this.positiveBranch = positiveBranch;
+        this.branches = branches;
     }
 
     @Override
@@ -18,8 +18,7 @@ public class BranchCoverage {
         return "BranchCoverage{" +
                 "line=" + line +
                 ", branchId=" + branchId +
-                ", negativeBranch=" + negativeBranch +
-                ", positiveBranch=" + positiveBranch +
+                ", branches=" + Arrays.toString(branches) +
                 '}';
     }
 
@@ -27,11 +26,15 @@ public class BranchCoverage {
         return line;
     }
 
+    public int[] getBranches() {
+        return branches;
+    }
+
     public int getNegativeBranch() {
-        return negativeBranch;
+        return branches[0];
     }
 
     public int getPositiveBranch() {
-        return positiveBranch;
+        return branches[1];
     }
 }

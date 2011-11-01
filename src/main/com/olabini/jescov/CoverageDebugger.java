@@ -93,10 +93,12 @@ public class CoverageDebugger implements Debugger {
         for(Object o : availableLines) {
             int line = (int)Context.toNumber(((List)o).get(0));
             int branch = (int)Context.toNumber(((List)o).get(1));
-            Object cov = coverage.get(branch, scope);
-            int negative = (int)Context.toNumber(((List)cov).get(0));
-            int positive = (int)Context.toNumber(((List)cov).get(1));
-            branchResults.add(new BranchCoverage(line, branch, negative, positive));
+            List cov = (List)coverage.get(branch, scope);
+            int[] covResult = new int[cov.size()];
+            for(int i = 0; i<cov.size(); i++) {
+                covResult[i] = (int)Context.toNumber(cov.get(i));
+            }
+            branchResults.add(new BranchCoverage(line, branch, covResult));
         }
     }
 

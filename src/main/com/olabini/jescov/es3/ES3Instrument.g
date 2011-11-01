@@ -1053,7 +1053,7 @@ logicalANDExpression
 }
 @after {
         if (instrumented) {
-           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid, 2));
         }
 }
 	: 
@@ -1068,7 +1068,7 @@ logicalANDExpressionNoIn
 }
 @after {
         if (instrumented) {
-           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid, 2));
         }
 }
 	: 
@@ -1083,7 +1083,7 @@ logicalORExpression
 }
 @after {
         if (instrumented) {
-           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid, 2));
         }
 }
 	: (logicalANDExpression LOR) => (left=logicalANDExpression LOR right=logicalORExpression -> {(instrumented=true)}? instrument_or(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid}) -> pass(stmt={$text}))
@@ -1097,7 +1097,7 @@ logicalORExpressionNoIn
 }
 @after {
         if (instrumented) {
-           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid, 2));
         }
 }
 	: (logicalANDExpressionNoIn LOR) => (left=logicalANDExpressionNoIn LOR right=logicalORExpressionNoIn -> {(instrumented=true)}? instrument_or(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid}) -> pass(stmt={$text}))
@@ -1115,7 +1115,7 @@ conditionalExpression
 }
 @after {
         if (instrumented) {
-           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid, 2));
         }
 }
 	: logicalORExpression ( QUE thenAssignment=assignmentExpression COLON elseAssignment=assignmentExpression )?
@@ -1130,7 +1130,7 @@ conditionalExpressionNoIn
 }
 @after {
         if (instrumented) {
-           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid, 2));
         }
 }
 	: logicalORExpressionNoIn ( QUE thenAssignment=assignmentExpressionNoIn COLON elseAssignment=assignmentExpressionNoIn )?
@@ -1343,7 +1343,7 @@ ifStatement
 }
 @after {
         if (instrument) {
-           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid, 2));
         }
 }
 // The predicate is there just to get rid of the warning. ANTLR will handle the dangling else just fine.
@@ -1383,7 +1383,7 @@ whileStatement
 }
 @after {
         if (instrument) {
-           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid, 2));
         }
 }
 	: WHILE LPAREN expression RPAREN statement
@@ -1439,7 +1439,7 @@ forStatement
 }
 @after {
         if (instrument) {
-           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid, 2));
         }
 }
 	: FOR LPAREN forControl RPAREN statement
