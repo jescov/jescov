@@ -26,6 +26,7 @@ public class CodeInstrumentor {
        "instrument_while(conditional, stmt, hash, bid) ::= \"while(((<conditional>) || BCOV_<hash>.branchFalseInc(<bid>)) && BCOV_<hash>.branchTrueInc(<bid>)) <stmt>\"" +
        "instrument_for(pre, stmt, hash, bid) ::= \"BCOV_<hash>.branchFalseInc(<bid>);<pre> {BCOV_<hash>.branchTrueInc(<bid>); <stmt> }\"" +
        "instrument_and(left, right, hash, bid) ::= \"((BCOV_var_<hash>_<bid>=<left>) || BCOV_<hash>.branchFalseInc(<bid>) || BCOV_var_<hash>_<bid>) && BCOV_<hash>.branchTrueInc(<bid>) && <right>\"" +
+       "instrument_or(left, right, hash, bid) ::= \"(((BCOV_var_<hash>_<bid>=<left>) && BCOV_<hash>.branchTrueInc(<bid>) && BCOV_var_<hash>_<bid>) || BCOV_<hash>.branchFalseInc(<bid>)) || <right>\"" +
        "pass(stmt) ::= \"<stmt>\"").toCharArray();
 
 

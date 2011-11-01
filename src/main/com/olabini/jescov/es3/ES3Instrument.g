@@ -1056,21 +1056,54 @@ logicalANDExpression
            $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
         }
 }
-	: left=bitwiseORExpression ( LAND right=bitwiseORExpression )?
+	: left=bitwiseORExpression ( LAND right=bitwiseORExpression )*
 	  -> {$right.text != null && (instrumented=true)}? instrument_and(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid})
 	  -> pass(stmt={$text})
 	;
 
 logicalANDExpressionNoIn
-	: bitwiseORExpressionNoIn ( LAND bitwiseORExpressionNoIn )*
+@init{
+        boolean instrumented = false;
+        int bid = $program::branches++;
+}
+@after {
+        if (instrumented) {
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+        }
+}
+	: left=bitwiseORExpressionNoIn ( LAND right=bitwiseORExpressionNoIn )*
+	  -> {$right.text != null && (instrumented=true)}? instrument_and(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid})
+	  -> pass(stmt={$text})
 	;
 	
 logicalORExpression
-	: logicalANDExpression ( LOR logicalANDExpression )*
+@init{
+        boolean instrumented = false;
+        int bid = $program::branches++;
+}
+@after {
+        if (instrumented) {
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+        }
+}
+	: left=logicalANDExpression ( LOR right=logicalANDExpression )*
+	  -> {$right.text != null && (instrumented=true)}? instrument_or(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid})
+	  -> pass(stmt={$text})
 	;
 	
 logicalORExpressionNoIn
-	: logicalANDExpressionNoIn ( LOR logicalANDExpressionNoIn )*
+@init{
+        boolean instrumented = false;
+        int bid = $program::branches++;
+}
+@after {
+        if (instrumented) {
+           $program::executableBranches.add(java.util.Arrays.asList($start.getLine(), bid));
+        }
+}
+	: left=logicalANDExpressionNoIn ( LOR right=logicalANDExpressionNoIn )*
+	  -> {$right.text != null && (instrumented=true)}? instrument_or(left = {$left.text}, right = {$right.text}, hash = {$program::hash}, bid = {bid})
+	  -> pass(stmt={$text})
 	;
 
 // $>
