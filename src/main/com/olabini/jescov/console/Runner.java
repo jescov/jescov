@@ -4,6 +4,7 @@
 package com.olabini.jescov.console;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -13,6 +14,8 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 import static com.olabini.jescov.Coverage.on;
+
+import com.olabini.jescov.generators.JsonGenerator;
 
 /**
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
@@ -47,7 +50,9 @@ public class Runner {
         for(String file : args) {
             r.executeReader(file, new FileReader(file));
         }
-    r.done();
-}
-
+        CoverageData data = r.done();
+        FileWriter fw = new FileWriter("jescov.json.ser");
+        new JsonGenerator().generate(data, fw);
+        fw.close();
+    }
 }// Runner
