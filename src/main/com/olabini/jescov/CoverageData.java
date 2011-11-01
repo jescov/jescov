@@ -3,6 +3,7 @@ package com.olabini.jescov;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Collection;
 
 public class CoverageData {
     private final Map<String, FileCoverage> fileCoverage;
@@ -17,4 +18,9 @@ public class CoverageData {
     public FileCoverage getFileCoverageFor(String filename) {
         return fileCoverage.get(filename);
     }
+
+    public Collection<String> getFileNames() {
+        return fileCoverage.keySet();
+    }
+
 }

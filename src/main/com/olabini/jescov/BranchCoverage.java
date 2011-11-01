@@ -26,6 +26,10 @@ public class BranchCoverage {
         return line;
     }
 
+    public int getBranchId() {
+        return branchId;
+    }
+
     public int[] getBranches() {
         return branches;
     }

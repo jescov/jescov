@@ -46,6 +46,13 @@ public class FileCoverage {
         return lineCoverage.get(line);
     }
 
+    public Collection<Integer> getLines() {
+        Set<Integer> allLines = new HashSet<Integer>();
+        allLines.addAll(lineCoverage.keySet());
+        allLines.addAll(branchCoverage.keySet());
+        return allLines;
+    }
+
     public String getFilename() {
         return filename;
     }

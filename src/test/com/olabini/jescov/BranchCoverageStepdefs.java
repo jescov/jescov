@@ -3,12 +3,23 @@
  */
 package com.olabini.jescov;
 
+import java.io.IOException;
+import java.io.StringWriter;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static com.olabini.jescov.matchers.BranchCoverageMatcher.hasBranchCoverage;
 import static com.olabini.jescov.matchers.BranchCoverageMatcher.hasNegativeBranchCoverage;
 import static com.olabini.jescov.matchers.BranchCoverageMatcher.hasPositiveBranchCoverage;
 
 import cucumber.annotation.en.Then;
+
+import com.olabini.jescov.generators.JsonGenerator;
+
+import org.json.simple.JSONValue;
 
 public class BranchCoverageStepdefs {
     private CucumberData data;
@@ -30,5 +41,16 @@ public class BranchCoverageStepdefs {
     @Then("^the branch coverage on line (\\d+) should be (\\d+) on axis (\\d+)$")
     public void the_positive_branch_coverage_on_line_should_be_(int line, int expectedCoverage, int axis) {
         assertThat(data.getCoverageData(), hasBranchCoverage(expectedCoverage).onLine(line).onAxis(axis));
+    }
+
+    @Then("^the generated JSON should be:$")
+    public void the_generated_JSON_should_be(String expectedJSON) throws IOException {
+        StringWriter writer = new StringWriter();
+        new JsonGenerator().generate(data.getCoverageData(), writer);
+
+        Object expected = JSONValue.parse(expectedJSON);
+        Object real = JSONValue.parse(writer.toString());
+
+        assertThat(real, is(expected));
     }
 }// BranchCoverageStepdefs
