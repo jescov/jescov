@@ -23,4 +23,43 @@ public class CoverageData {
         return fileCoverage.keySet();
     }
 
+    public int getLinesValid() {
+        int sum = 0;
+        for(FileCoverage fc : fileCoverage.values()) {
+            sum += fc.getLinesValid();
+        }
+        return sum;
+    }
+
+    public int getBranchesValid() {
+        int sum = 0;
+        for(FileCoverage fc : fileCoverage.values()) {
+            sum += fc.getBranchesValid();
+        }
+        return sum;
+    }
+
+    public int getLinesCovered() {
+        int sum = 0;
+        for(FileCoverage fc : fileCoverage.values()) {
+            sum += fc.getLinesCovered();
+        }
+        return sum;
+    }
+
+    public int getBranchesCovered() {
+        int sum = 0;
+        for(FileCoverage fc : fileCoverage.values()) {
+            sum += fc.getBranchesCovered();
+        }
+        return sum;
+    }
+
+    public double getLineRate() {
+        return getLinesCovered() / (double)getLinesValid();
+    }
+
+    public double getBranchRate() {
+        return getBranchesCovered() / (double)getBranchesValid();
+    }
 }

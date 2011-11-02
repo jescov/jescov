@@ -16,9 +16,11 @@ public class JavaScriptStepdefs {
 
     @When("^I execute this JavaScript:$")
     public void I_execute_this_JavaScript(String sourceCode) {
-        Runner r = new Runner();
-        r.executeSource("<test input>", sourceCode);
-        CoverageData cd = r.done();
-        data.setCoverageData(cd);
+        data.getRunner().executeSource("<test input>", sourceCode);
+    }
+
+    @When("^I execute this JavaScript named (.*?):$")
+    public void I_execute_this_JavaScript_named(String filename, String sourceCode) {
+        data.getRunner().executeSource(filename, sourceCode);
     }
 }// JavaScriptStepdefs

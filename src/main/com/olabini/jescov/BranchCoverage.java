@@ -41,4 +41,16 @@ public class BranchCoverage {
     public int getPositiveBranch() {
         return branches[1];
     }
+    
+    public int getBranchesValid() {
+        return branches.length;
+    }
+
+    public int getBranchesCovered() {
+        int sum = 0;
+        for(int hits : branches) {
+            sum += (hits > 0 ? 1 : 0);
+        }
+        return sum;
+    }
 }

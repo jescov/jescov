@@ -16,4 +16,12 @@ public class LineCoverage {
     public int getHits() {
         return this.hits;
     }
+
+    public int getLinesValid() {
+        return 1;
+    }
+
+    public int getLinesCovered() {
+        return hits > 0 ? 1 : 0;
+    }
 }

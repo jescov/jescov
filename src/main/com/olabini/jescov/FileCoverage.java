@@ -56,4 +56,44 @@ public class FileCoverage {
     public String getFilename() {
         return filename;
     }
+
+    public int getLinesValid() {
+        int sum = 0;
+        for(LineCoverage lc : allLineCoverage) {
+            sum += lc.getLinesValid();
+        }
+        return sum;
+    }
+
+    public int getBranchesValid() {
+        int sum = 0;
+        for(BranchCoverage bc : allBranchCoverage) {
+            sum += bc.getBranchesValid();
+        }
+        return sum;
+    }
+
+    public int getLinesCovered() {
+        int sum = 0;
+        for(LineCoverage lc : allLineCoverage) {
+            sum += lc.getLinesCovered();
+        }
+        return sum;
+    }
+
+    public int getBranchesCovered() {
+        int sum = 0;
+        for(BranchCoverage bc : allBranchCoverage) {
+            sum += bc.getBranchesCovered();
+        }
+        return sum;
+    }
+
+    public double getLineRate() {
+        return getLinesCovered() / (double)getLinesValid();
+    }
+
+    public double getBranchRate() {
+        return getBranchesCovered() / (double)getBranchesValid();
+    }
 }
