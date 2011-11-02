@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static com.olabini.jescov.matchers.BranchCoverageMatcher.hasBranchCoverage;
@@ -18,6 +19,7 @@ import static com.olabini.jescov.matchers.BranchCoverageMatcher.hasPositiveBranc
 import cucumber.annotation.en.Then;
 
 import com.olabini.jescov.generators.JsonGenerator;
+import com.olabini.jescov.generators.XmlGenerator;
 
 import org.json.simple.JSONValue;
 
@@ -52,5 +54,13 @@ public class BranchCoverageStepdefs {
         Object real = JSONValue.parse(writer.toString());
 
         assertThat(real, is(expected));
+    }
+
+    @Then("^the generated XML should be:$")
+    public void the_generated_XML_should_be(String expectedXML) throws IOException {
+        StringWriter writer = new StringWriter();
+        new XmlGenerator().generate(data.getCoverageData(), writer);
+
+        assertEquals(expectedXML, writer.toString());
     }
 }// BranchCoverageStepdefs
