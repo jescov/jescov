@@ -78,37 +78,13 @@ public class HtmlGenerator {
         fw.close();
     }
 
-    private static class FilenameAndCoverage {
-        private final String filename;
-        private final String coverage;
-        public FilenameAndCoverage(String filename, String coverage) {
-            this.filename = filename;
-            this.coverage = coverage;
-        }
-
-        public String getFilename() {
-            return this.filename;
-        }
-        public String getCoverage() {
-            return this.coverage;
-        }
-    }
-
     private void generateLeftFrame(final CoverageData data) throws IOException {
         STGroup g = new STGroupFile("templates/cobertura-html.stg");
         final ST template = g.getInstanceOf("sourcefiles");
 
         for(String file : data.getFileNames()) {
             FileCoverage fc = data.getFileCoverageFor(file);
-            int valid = fc.getLinesValid();
-            int covered = fc.getLinesCovered();
-            String percentage;
-            if(valid == 0) {
-                percentage = "N/A";
-            } else {
-                percentage = ""+((int)(((double)covered / (double)valid) * 100))+"%";
-            }
-            template.add("fileAndCoverage", new FilenameAndCoverage(file, percentage));
+            template.add("fileAndCoverage", new FilesAndRelatedInformation(true, file, fc.getLinesValid(), fc.getLinesCovered(), fc.getBranchesValid(), fc.getBranchesCovered()));
         }
 
         intoFile("frame-sourcefiles.html", new WriteAction() {
@@ -118,7 +94,97 @@ public class HtmlGenerator {
             });
     }
 
-    private void generateRightFrame(CoverageData data) {
+
+    private static class FilesAndRelatedInformation {
+        private final boolean link;
+        private final String filename;
+        private final int validLines;
+        private final int coveredLines;
+        private final int validBranches;
+        private final int coveredBranches;
+
+        public FilesAndRelatedInformation(boolean link, String filename, int validLines, int coveredLines, int validBranches, int coveredBranches) {
+            this.link = link;
+            this.filename = filename;
+            this.validLines = validLines;
+            this.coveredLines = coveredLines;
+            this.validBranches = validBranches;
+            this.coveredBranches = coveredBranches;
+        }
+
+        public boolean getLink() {
+            return this.link;
+        }
+
+        public String getFilename() {
+            return this.filename;
+        }
+
+        public String getLinesCoveragePercent() {
+            return coveragePercent(coveredLines, validLines);
+        }
+
+        public String getBranchesCoveragePercent() {
+            return coveragePercent(coveredBranches, validBranches);
+        }
+
+        public String getLinesCoverageWidth() {
+            return coverageWidth(coveredLines, validLines);
+        }
+
+        public String getBranchesCoverageWidth() {
+            return coverageWidth(coveredBranches, validBranches);
+        }
+
+        public String getLinesCoverageFraction() {
+            return coverageFraction(coveredLines, validLines);
+        }
+
+        public String getBranchesCoverageFraction() {
+            return coverageFraction(coveredBranches, validBranches);
+        }
+
+        private String coveragePercent(int covered, int valid) {
+            if(valid == 0) {
+                return "N/A";
+            } else {
+                return ""+((int)(((double)covered / (double)valid) * 100))+"%";
+            }
+        }
+
+        private String coverageWidth(int covered, int valid) {
+            if(valid == 0) {
+                return "0";
+            } else {
+                return ""+((int)(((double)covered / (double)valid) * 100));
+            }
+        }
+
+        private String coverageFraction(int covered, int valid) {
+            if(valid == 0) {
+                return "N/A";
+            } else {
+                return "" + covered + "/" + valid;
+            }
+        }
+    }
+
+
+    private void generateRightFrame(CoverageData data) throws IOException {
+        STGroup g = new STGroupFile("templates/cobertura-html.stg");
+        final ST template = g.getInstanceOf("summary");
+
+        template.add("fileAndCoverage", new FilesAndRelatedInformation(false, "All Files", data.getLinesValid(), data.getLinesCovered(), data.getBranchesValid(), data.getBranchesCovered()));
+        for(String file : data.getFileNames()) {
+            FileCoverage fc = data.getFileCoverageFor(file);
+            template.add("fileAndCoverage", new FilesAndRelatedInformation(true, file, fc.getLinesValid(), fc.getLinesCovered(), fc.getBranchesValid(), fc.getBranchesCovered()));
+        }
+
+        intoFile("frame-summary.html", new WriteAction() {
+                public void write(Writer w) throws IOException {
+                    template.write(new NoIndentWriter(w));
+                }
+            });
         
     }
 
