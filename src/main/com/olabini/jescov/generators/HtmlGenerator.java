@@ -12,6 +12,8 @@ import com.olabini.jescov.FileCoverage;
 import com.olabini.jescov.LineCoverage;
 import com.olabini.jescov.BranchCoverage;
 
+import org.stringtemplate.v4.*;
+
 public class HtmlGenerator {
     private final static String DEFAULT_DIRECTORY = "coverage-report";
 
@@ -76,43 +78,42 @@ public class HtmlGenerator {
         fw.close();
     }
 
+    private static class FilenameAndCoverage {
+        private final String filename;
+        private final String coverage;
+        public FilenameAndCoverage(String filename, String coverage) {
+            this.filename = filename;
+            this.coverage = coverage;
+        }
+
+        public String getFilename() {
+            return this.filename;
+        }
+        public String getCoverage() {
+            return this.coverage;
+        }
+    }
+
     private void generateLeftFrame(final CoverageData data) throws IOException {
+        STGroup g = new STGroupFile("templates/cobertura-html.stg");
+        final ST template = g.getInstanceOf("sourcefiles");
+
+        for(String file : data.getFileNames()) {
+            FileCoverage fc = data.getFileCoverageFor(file);
+            int valid = fc.getLinesValid();
+            int covered = fc.getLinesCovered();
+            String percentage;
+            if(valid == 0) {
+                percentage = "N/A";
+            } else {
+                percentage = ""+((int)(((double)covered / (double)valid) * 100))+"%";
+            }
+            template.add("fileAndCoverage", new FilenameAndCoverage(file, percentage));
+        }
+
         intoFile("frame-sourcefiles.html", new WriteAction() {
                 public void write(Writer w) throws IOException {
-                    w.write("<!DOCTYPE html>\n");
-                    w.write("<html lang='en'>\n");
-                    w.write("  <head>\n");
-                    w.write("    <meta charset=\"UTF-8\">\n");
-                    w.write("    <title>Coverage Report - Files</title>\n");
-                    w.write("    <link title=\"Style\" type=\"text/css\" rel=\"stylesheet\" href=\"css/main.css\"/>\n");
-                    w.write("  </head>\n");
-                    w.write("  <body>\n");
-                    w.write("    <h5>\n");
-                    w.write("      All Files\n");
-                    w.write("    </h5>\n");
-                    w.write("    <table width=\"100%\">\n");
-                    w.write("      <tbody>\n");
-
-                    for(String file : data.getFileNames()) {
-                        FileCoverage fc = data.getFileCoverageFor(file);
-                        int valid = fc.getLinesValid();
-                        int covered = fc.getLinesCovered();
-                        String percentage;
-                        if(valid == 0) {
-                            percentage = "N/A";
-                        } else {
-                            percentage = ""+((int)(((double)covered / (double)valid) * 100))+"%";
-                        }
-
-                        w.write("        <tr>\n");
-                        w.write("          <td nowrap=\"nowrap\"><a target=\"summary\" href=\"" + file + ".html\">" + file + "</a> <i>(" + percentage + ")</i></td>\n");
-                        w.write("        </tr>\n");
-                    }
-
-                    w.write("      </tbody>\n");
-                    w.write("    </table>\n");
-                    w.write("  </body>\n");
-                    w.write("</html>\n");
+                    template.write(new NoIndentWriter(w));
                 }
             });
     }

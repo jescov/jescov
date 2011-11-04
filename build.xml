@@ -39,7 +39,7 @@
 
   <target name="generate-grammer" depends="prepare">
     <mkdir dir="${src.gen.dir}" />
-    <java jar="${lib.dir}/antlr-3.1.3.jar" fork="true" dir="${src.dir}">
+    <java jar="${lib.dir}/antlr-3.3-complete.jar" fork="true" dir="${src.dir}">
       <arg value="-make" />
       <arg value="-o" />
       <arg value="../gen" />
@@ -121,9 +121,10 @@
         <include name="**/*.js"/>
       </fileset>
       <fileset dir="${src.resources.dir}"/>
-      <zipfileset src="${lib.dir}/antlr-3.1.3.jar"/>
+      <zipfileset src="${lib.dir}/antlr-3.3-complete.jar"/>
       <zipfileset src="${lib.dir}/js.jar"/>
       <zipfileset src="${lib.dir}/json_simple-1.1.jar"/>
+      <zipfileset src="${lib.dir}/ST-4.0.4.jar"/>
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
         <attribute name="Main-Class" value="com.olabini.jescov.console.Runner"/>

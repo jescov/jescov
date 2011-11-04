@@ -1,0 +1,27 @@
+delimiters "%", "%"
+sourcefiles(fileAndCoverage) ::= <<
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset="UTF-8">
+    <title>Coverage Report - Files</title>
+    <link title="Style" type="text/css" rel="stylesheet" href="css/main.css"/>
+  </head>
+  <body>
+    <h5>
+      All Files
+    </h5>
+    <table width="100\%">
+      <tbody>
+        %fileAndCoverage:sourcefilesCoverage()%
+      </tbody>
+    </table>
+  </body>
+</html>
+>>
+
+sourcefilesCoverage(fc) ::= <<
+        <tr>
+          <td nowrap="nowrap"><a target="summary" href="%fc.filename%.html">%fc.filename%</a> <i>(%fc.coverage%)</i></td>
+        </tr>
+>>
