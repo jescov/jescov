@@ -16,6 +16,7 @@ import org.mozilla.javascript.Scriptable;
 import static com.olabini.jescov.Coverage.on;
 
 import com.olabini.jescov.generators.JsonGenerator;
+import com.olabini.jescov.generators.HtmlGenerator;
 
 /**
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
@@ -54,5 +55,6 @@ public class Runner {
         FileWriter fw = new FileWriter("jescov.json.ser");
         new JsonGenerator().generate(data, fw);
         fw.close();
+        new HtmlGenerator().generate(data);
     }
 }// Runner
