@@ -20,7 +20,12 @@ public class FileCoverage {
     private Map<Integer, LineCoverage> generateLineCoverage() {
         Map<Integer, LineCoverage> result = new TreeMap<Integer, LineCoverage>();
         for(LineCoverage lc : allLineCoverage) {
-            result.put(lc.getLine(), lc);
+            LineCoverage existing = result.get(lc.getLine());
+            if(existing != null) {
+                result.put(lc.getLine(), new LineCoverage(lc.getLine(), existing.getHits() + lc.getHits()));
+            } else {
+                result.put(lc.getLine(), lc);
+            }
         }
         return result;
     }
@@ -32,8 +37,21 @@ public class FileCoverage {
             if(null == lbc) {
                 lbc = new LinkedList<BranchCoverage>();
                 result.put(bc.getLine(), lbc);
+                lbc.add(bc);
+            } else {
+                BranchCoverage existing = null;
+                for(BranchCoverage ebc : lbc) {
+                    if(ebc.getBranchId() == bc.getBranchId()) {
+                        existing = ebc;
+                    }
+                }
+                if(existing == null) {
+                    lbc.add(bc);
+                } else {
+                    lbc.remove(existing);
+                    lbc.add(existing.plus(bc));
+                }
             }
-            lbc.add(bc);
         }
         return result;
     }
@@ -95,5 +113,17 @@ public class FileCoverage {
 
     public double getBranchRate() {
         return getBranchesCovered() / (double)getBranchesValid();
+    }
+
+    public FileCoverage plus(FileCoverage other) {
+        Collection<LineCoverage> allLines = new ArrayList<LineCoverage>();
+        allLines.addAll(this.allLineCoverage);
+        allLines.addAll(other.allLineCoverage);
+        
+        Collection<BranchCoverage> allBranches = new ArrayList<BranchCoverage>();
+        allBranches.addAll(this.allBranchCoverage);
+        allBranches.addAll(other.allBranchCoverage);
+        
+        return new FileCoverage(this.filename, allLines, allBranches);
     }
 }

@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Collection;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.ArrayList;
 
 public class CoverageData {
     private final Map<String, FileCoverage> fileCoverage;
@@ -61,5 +64,28 @@ public class CoverageData {
 
     public double getBranchRate() {
         return getBranchesCovered() / (double)getBranchesValid();
+    }
+
+    public CoverageData plus(CoverageData other) {
+        List<FileCoverage> fcs = new ArrayList<FileCoverage>();
+        Set<String> files = new HashSet<String>();
+        files.addAll(this.getFileNames());
+        files.addAll(other.getFileNames());
+        for(String file : files) {
+            FileCoverage left = this.getFileCoverageFor(file);
+            FileCoverage right = other.getFileCoverageFor(file);
+
+            if(left == null || right == null) {
+                if(left == null) {
+                    fcs.add(right);
+                } else {
+                    fcs.add(left);
+                }
+            } else {
+                fcs.add(left.plus(right));
+            }
+        }
+
+        return new CoverageData(fcs);
     }
 }

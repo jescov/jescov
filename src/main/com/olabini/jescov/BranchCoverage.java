@@ -53,4 +53,12 @@ public class BranchCoverage {
         }
         return sum;
     }
+
+    public BranchCoverage plus(BranchCoverage other) {
+        int[] newBranches = new int[this.branches.length];
+        for(int i = 0; i<newBranches.length; i++) {
+            newBranches[i] = this.branches[i] + other.branches[i];
+        }
+        return new BranchCoverage(this.line, this.branchId, newBranches);
+    }
 }
