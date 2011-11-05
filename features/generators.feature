@@ -134,5 +134,3 @@ Feature: Generating coverage output
         </packages>
       </coverage>
       """
-
-  Scenario: Generate Cobertura-style HTML

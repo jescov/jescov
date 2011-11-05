@@ -103,8 +103,39 @@ public class HtmlGenerator {
             });
     }
 
-    private void generateAllFiles(CoverageData data) {
-        
+    private void generateAllFiles(CoverageData data) throws IOException {
+        STGroup g = new STGroupFile("templates/cobertura-html.stg");
+
+        for(String file : data.getFileNames()) {
+            final ST template = g.getInstanceOf("file");
+            generateFile(template, file, data.getFileCoverageFor(file));
+        }
+    }
+
+    private void generateFile(final ST template, String file, FileCoverage fc) throws IOException {
+        template.add("name", file);
+        BufferedReader r = new BufferedReader(new FileReader(file));
+        String line;
+        int lineNumber = 0;
+        while((line = r.readLine()) != null) {
+            lineNumber++;
+            LineCoverage lc = fc.getLineCoverageFor(lineNumber);
+            Collection<int[]> branches = new ArrayList<int[]>();
+            Collection<BranchCoverage> bcs = fc.getBranchCoverageFor(lineNumber);
+            if(bcs != null) {
+                for(BranchCoverage bc : fc.getBranchCoverageFor(lineNumber)) {
+                    branches.add(bc.getBranches());
+                }
+            }
+            template.add("line", new LineInfo(lineNumber, line, lc == null ? -1 : lc.getHits(), branches));
+        }
+        r.close();
+
+        intoFile(file + ".html", new WriteAction() {
+                public void write(Writer w) throws IOException {
+                    template.write(new NoIndentWriter(w));
+                }
+            });
     }
 
     private void ensure(String dir) throws IOException {
