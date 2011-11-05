@@ -9,6 +9,10 @@ public class CucumberData {
     private CoverageData coverageData;
     private Runner runner;
 
+    public void setCoverageData(CoverageData data) {
+        this.coverageData = data;
+    }
+
     public CoverageData getCoverageData() {
         if(this.coverageData == null) {
             coverageData = this.runner.done();

@@ -42,6 +42,28 @@ Feature: Generating coverage output
       }
       """
 
+  Scenario: Generate internal structures from JSON
+    When I ingest this JSON:
+      """
+      {"<test input>": 
+        [
+          [1, 1, []],
+          [2, 8, [[0, [4,4]]]],
+          [3, 4, [[11,[1,1]], [10,[2,2]]]],
+          [5, 4, [[20,[1,1]], [14,[2,2]]]],
+          [8, 1, []],
+          [9, 1, []],
+          [10, 1, []],
+          [11, 1, []],
+          [12, 1, []],
+          [13, 1, []], 
+          [14, 1, []],
+          [15, 1, []]
+        ]
+      }
+      """
+    Then the internal structures should be correct
+
   Scenario: Generate Cobertura-style XML
     When I execute this JavaScript named hello.js:
       """
