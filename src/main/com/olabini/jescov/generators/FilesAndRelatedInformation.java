@@ -28,6 +28,10 @@ public class FilesAndRelatedInformation {
         return this.filename;
     }
 
+    public String getPhysicalFilename() {
+        return this.filename.replaceAll("/", ".");
+    }
+
     public String getLinesCoveragePercent() {
         return coveragePercent(coveredLines, validLines);
     }

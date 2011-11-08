@@ -277,7 +277,7 @@ public Token nextToken()
 @parser::members
 {
 
-public java.util.Map<String, java.util.List<Integer>> linesMap = new java.util.HashMap<String, java.util.List<Integer>>();
+public java.util.Map<String, java.util.Collection<Integer>> linesMap = new java.util.HashMap<String, java.util.Collection<Integer>>();
 
 private final boolean isLeftHandSideAssign(RuleReturnScope lhs, Object[] cached)
 {
@@ -1252,12 +1252,7 @@ scope {
    boolean isBlock;
 }
 @init{
-        boolean instrument = false;
-       
-	if ($start.getLine() > $program::stopLine) {
-	  $program::stopLine = $start.getLine();
-	  instrument = true;
-	}	
+        boolean instrument = !$program::executableLines.contains($start.getLine());
 }
 @after {
         if (instrument && !$statement::isBlock) {
@@ -1645,12 +1640,10 @@ finallyClause
 
 functionDeclaration
 @init{
-        boolean instrument = false;
-	if ($start.getLine() > $program::stopLine) {
-	  $program::executableLines.add($start.getLine());
-	  $program::stopLine = $start.getLine();
-	  instrument = true;
-	}	
+      boolean instrument = true;
+	  if(instrument) {
+        $program::executableLines.add($start.getLine());
+      }
 }
 	: FUNCTION name=Identifier formalParameterList functionBody
 	  -> {instrument}? instrument(stmt={$text}, ln={$start.getLine()},  hash = {$program::hash})
@@ -1659,7 +1652,7 @@ functionDeclaration
 
 functionExpression
 	: FUNCTION name=Identifier? formalParameterList functionBody
-	// -> ( FUNCTION $name? formalParameterList functionBody )
+	  -> pass(stmt={$text})
 	;
 
 formalParameterList
@@ -1680,21 +1673,19 @@ program
 scope {
   String name;
   String hash;
-  java.util.List<Integer> executableLines;
+  java.util.Collection<Integer> executableLines;
   java.util.LinkedList executableBranches;
-  int stopLine;
   int branches;
 }
 @init {
   String name = getSourceName();
   $program::name = name;
   $program::hash = Integer.toString(Math.abs(name.hashCode()), Character.MAX_RADIX);
-  $program::executableLines = new java.util.LinkedList();
+  $program::executableLines = new java.util.TreeSet();
   $program::executableBranches = new java.util.LinkedList();
-  $program::stopLine = 0;
   $program::branches = 0;
 }
-	: (sourceElement*) {java.util.Collections.sort($program::executableLines); linesMap.put($program::name, $program::executableLines);}
+	: (sourceElement*) {linesMap.put($program::name, $program::executableLines);}
 	-> init_instrument(stmt = {$text}, hash = {$program::hash}, name = {name}, lines = {$program::executableLines.toString()}, branches = {$program::executableBranches.toString()})
 	;
 

@@ -17,7 +17,7 @@ public class CoverageRewriter {
     public void rewrite(DebuggableScript input, String source) {
         CodeInstrumentor ci = new CodeInstrumentor(nameMapper);
         String ic = ci.instrument(input.getSourceName(), source);
-               // System.err.println("New code: " + ic);
+        //        System.err.println("New code: " + ic);
         Script s = context.compileString(ic, input.getSourceName(), 0, null);
         MozillaPackageProxy.copyInterpreterInternals(s, input);
     }

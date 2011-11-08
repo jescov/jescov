@@ -52,29 +52,31 @@ public class CoverageDebugger implements Debugger {
     private CoverageData coverageData;
 
     void generateCoverageData(Scriptable scope) {
-        Map<String, Map<Integer, LineCoverage>> coverageResults = new HashMap<String, Map<Integer, LineCoverage>>();
-        Map<String, Collection<BranchCoverage>> coverageResults2 = new HashMap<String, Collection<BranchCoverage>>();
-        NativeArray na = (NativeArray)(((Scriptable)scope.get("LCOV", scope)).get("collectedCoverageData", scope));
-        for(Object coverage : na) {
-            generateLineCoverage((Scriptable) coverage, scope, coverageResults);
-        }
-        NativeArray na2 = (NativeArray)(((Scriptable)scope.get("BCOV", scope)).get("collectedCoverageData", scope));
-        for(Object coverage : na2) {
-            generateBranchCoverage((Scriptable) coverage, scope, coverageResults2);
-        }
+        if(configuration.isEnabled()) {
+            Map<String, Map<Integer, LineCoverage>> coverageResults = new HashMap<String, Map<Integer, LineCoverage>>();
+            Map<String, Collection<BranchCoverage>> coverageResults2 = new HashMap<String, Collection<BranchCoverage>>();
+            NativeArray na = (NativeArray)(((Scriptable)scope.get("LCOV", scope)).get("collectedCoverageData", scope));
+            for(Object coverage : na) {
+                generateLineCoverage((Scriptable) coverage, scope, coverageResults);
+            }
+            NativeArray na2 = (NativeArray)(((Scriptable)scope.get("BCOV", scope)).get("collectedCoverageData", scope));
+            for(Object coverage : na2) {
+                generateBranchCoverage((Scriptable) coverage, scope, coverageResults2);
+            }
 
-        Set<String> allFileNames = new HashSet<String>();
-        allFileNames.addAll(coverageResults.keySet());
-        allFileNames.addAll(coverageResults2.keySet());
-        List<FileCoverage> result = new ArrayList<FileCoverage>();
-        for(String fileName : allFileNames) {
-            Map<Integer, LineCoverage> lineCoverage = coverageResults.get(fileName);
-            Collection<BranchCoverage> branchCoverage = coverageResults2.get(fileName);
-            result.add(new FileCoverage(fileName,
-                    lineCoverage == null ? Collections.<LineCoverage>emptySet() : lineCoverage.values(),
-                    branchCoverage == null ? Collections.<BranchCoverage>emptySet() : branchCoverage));
+            Set<String> allFileNames = new HashSet<String>();
+            allFileNames.addAll(coverageResults.keySet());
+            allFileNames.addAll(coverageResults2.keySet());
+            List<FileCoverage> result = new ArrayList<FileCoverage>();
+            for(String fileName : allFileNames) {
+                Map<Integer, LineCoverage> lineCoverage = coverageResults.get(fileName);
+                Collection<BranchCoverage> branchCoverage = coverageResults2.get(fileName);
+                result.add(new FileCoverage(fileName,
+                                            lineCoverage == null ? Collections.<LineCoverage>emptySet() : lineCoverage.values(),
+                                            branchCoverage == null ? Collections.<BranchCoverage>emptySet() : branchCoverage));
+            }
+            coverageData = new CoverageData(result);
         }
-        coverageData = new CoverageData(result);
     }
 
     private void generateLineCoverage(Scriptable coverage, Scriptable scope, Map<String, Map<Integer, LineCoverage>> coverageResults) {

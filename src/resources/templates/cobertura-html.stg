@@ -22,7 +22,7 @@ sourcefiles(fileAndCoverage) ::= <<
 
 sourcefilesCoverage(fc) ::= <<
         <tr>
-          <td nowrap="nowrap"><a target="summary" href="%fc.filename%.html">%fc.filename%</a> <i>(%fc.linesCoveragePercent%)</i></td>
+          <td nowrap="nowrap"><a target="summary" href="%fc.physicalFilename%.html">%fc.filename%</a> <i>(%fc.linesCoveragePercent%)</i></td>
         </tr>
 >>
 
@@ -65,7 +65,7 @@ fileTable.sort(0);
 summaryItem(fc) ::= <<
         <tr>
           <td>
-            %if(fc.link)% <a href="%fc.filename%.html">%fc.filename%</a>
+            %if(fc.link)% <a href="%fc.physicalFilename%.html">%fc.filename%</a>
             %else% <b>%fc.filename%</b>
             %endif%
           </td>

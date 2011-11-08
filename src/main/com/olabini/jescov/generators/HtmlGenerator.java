@@ -133,7 +133,7 @@ public class HtmlGenerator implements Generator {
         }
         r.close();
 
-        intoFile(file + ".html", new WriteAction() {
+        intoFile(file.replaceAll("/", ".") + ".html", new WriteAction() {
                 public void write(Writer w) throws IOException {
                     template.write(new NoIndentWriter(w));
                 }

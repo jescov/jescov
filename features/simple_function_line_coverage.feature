@@ -26,3 +26,26 @@ Feature: Simple function line coverage
       |          | }                       |
       |        1 | t1(); t1(); t1(); t1(); |
 
+  Scenario: Function defined using variable that is never called
+    * I get the following line coverage for the JavaScript: 
+      | coverage | code                  |
+      |        1 | var t1 = function() { |
+      |        0 |   return 0;           |
+      |          | }                     |
+
+  Scenario: Function defined using variable that is called once
+    * I get the following line coverage for the JavaScript: 
+      | coverage | code                  |
+      |        1 | var t1 = function() { |
+      |        1 |   return 0;           |
+      |          | }                     |
+      |        1 | t1();                 |
+
+  Scenario: Function defined using variable that is called several times
+    * I get the following line coverage for the JavaScript: 
+      | coverage | code                    |
+      |        1 | var t1 = function() {   |
+      |        4 |   return 0;             |
+      |          | }                       |
+      |        1 | t1(); t1(); t1(); t1(); |
+
