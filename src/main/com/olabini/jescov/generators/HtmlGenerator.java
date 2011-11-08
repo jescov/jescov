@@ -17,8 +17,11 @@ import org.stringtemplate.v4.*;
 
 public class HtmlGenerator implements Generator {
     private final String outputDirectory;
+    private final String sourceDirectory;
+
     public HtmlGenerator(Configuration configuration) {
         this.outputDirectory = configuration.getHtmlOutputDir();
+        this.sourceDirectory = configuration.getSourceDirectory();
     }
 
     public void generate(CoverageData data) throws IOException {
@@ -113,7 +116,7 @@ public class HtmlGenerator implements Generator {
 
     private void generateFile(final ST template, String file, FileCoverage fc) throws IOException {
         template.add("name", file);
-        BufferedReader r = new BufferedReader(new FileReader(file));
+        BufferedReader r = new BufferedReader(new FileReader(new File(sourceDirectory, file)));
         String line;
         int lineNumber = 0;
         while((line = r.readLine()) != null) {

@@ -50,7 +50,16 @@ public class Configuration {
     private boolean jsonOutputMerge = false;
     private Ignore ignore = new Allow();
     private boolean enabled = true;
+    private String sourceDirectory = ".";
 
+    public String getSourceDirectory() {
+        return sourceDirectory;
+    }
+
+    public void setSourceDirectory(String sourceDirectory) {
+        this.sourceDirectory = sourceDirectory;
+    }
+    
     public String getXmlOutputFile() {
         return xmlOutputFile;
     }
