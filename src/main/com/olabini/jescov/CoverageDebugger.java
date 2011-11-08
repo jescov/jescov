@@ -15,15 +15,19 @@ public class CoverageDebugger implements Debugger {
     private final CoverageRewriter coverageRewriter;
     private final Set<String> mappedSourceCode = new HashSet<String>();
     private final Set<String> currentlyMapping = new HashSet<String>();
+    private final Configuration configuration;
 
-    public CoverageDebugger(Context context) {
+    public CoverageDebugger(Context context, Configuration configuration) {
         this.nameMapper = new CoverageNameMapper();
         this.coverageRewriter = new CoverageRewriter(nameMapper, context);
+        this.configuration = configuration;
     }
 
     void evaluateCoverageDependencies(Context cx, Scriptable scope) {
-        mappedSourceCode.add(LcovDefinition.SOURCE);
-        cx.evaluateString(scope, LcovDefinition.SOURCE, LcovDefinition.SOURCE_NAME, 0, null);
+        if(configuration.isEnabled()) {
+            mappedSourceCode.add(LcovDefinition.SOURCE);
+            cx.evaluateString(scope, LcovDefinition.SOURCE, LcovDefinition.SOURCE_NAME, 0, null);
+        }
     }
 
     public DebugFrame getFrame(Context cx, DebuggableScript fnOrScript) {
@@ -31,13 +35,15 @@ public class CoverageDebugger implements Debugger {
     }
 
     public void handleCompilationDone(Context cx, DebuggableScript fnOrScript, String source) {
-        if(mappedSourceCode.add(source)) {
-            String sourceName = fnOrScript.getSourceName();
-            if(currentlyMapping.add(sourceName)) {
-                try {
-                    coverageRewriter.rewrite(fnOrScript, source);
-                } finally {
-                    currentlyMapping.remove(sourceName);
+        if(configuration.isEnabled() && configuration.allow(fnOrScript.getSourceName())) {
+            if(mappedSourceCode.add(source)) {
+                String sourceName = fnOrScript.getSourceName();
+                if(currentlyMapping.add(sourceName)) {
+                    try {
+                        coverageRewriter.rewrite(fnOrScript, source);
+                    } finally {
+                        currentlyMapping.remove(sourceName);
+                    }
                 }
             }
         }

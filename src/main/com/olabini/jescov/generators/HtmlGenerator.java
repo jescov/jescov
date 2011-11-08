@@ -7,6 +7,7 @@ import java.io.*;
 
 import java.util.*;
 
+import com.olabini.jescov.Configuration;
 import com.olabini.jescov.CoverageData;
 import com.olabini.jescov.FileCoverage;
 import com.olabini.jescov.LineCoverage;
@@ -14,12 +15,10 @@ import com.olabini.jescov.BranchCoverage;
 
 import org.stringtemplate.v4.*;
 
-public class HtmlGenerator {
-    private final static String DEFAULT_DIRECTORY = "coverage-report";
-
+public class HtmlGenerator implements Generator {
     private final String outputDirectory;
-    public HtmlGenerator() {
-        this.outputDirectory = DEFAULT_DIRECTORY;
+    public HtmlGenerator(Configuration configuration) {
+        this.outputDirectory = configuration.getHtmlOutputDir();
     }
 
     public void generate(CoverageData data) throws IOException {

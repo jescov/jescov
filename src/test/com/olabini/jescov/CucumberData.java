@@ -23,7 +23,7 @@ public class CucumberData {
 
     public Runner getRunner() {
         if(this.runner == null) {
-            this.runner = new Runner();
+            this.runner = new Runner(new Configuration());
         }
         return this.runner;
     }

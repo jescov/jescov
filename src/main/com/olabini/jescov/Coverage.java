@@ -8,14 +8,14 @@ public class Coverage {
     private final Scriptable scope;
     private final CoverageDebugger coverageDebugger;
 
-    Coverage(Context context, Scriptable scope) {
+    Coverage(Context context, Scriptable scope, Configuration configuration) {
         this.context = context;
         this.scope = scope;
-        this.coverageDebugger = new CoverageDebugger(context);
+        this.coverageDebugger = new CoverageDebugger(context, configuration);
     }
 
-    public static Coverage on(Context ctx, Scriptable scope) {
-        Coverage c = new Coverage(ctx, scope);
+    public static Coverage on(Context ctx, Scriptable scope, Configuration configuration) {
+        Coverage c = new Coverage(ctx, scope, configuration);
         c.initialize();
         return c;
     }

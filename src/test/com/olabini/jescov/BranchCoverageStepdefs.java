@@ -24,6 +24,7 @@ import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 
 import com.olabini.jescov.generators.JsonGenerator;
+import com.olabini.jescov.generators.JsonIngester;
 import com.olabini.jescov.generators.XmlGenerator;
 
 import org.json.simple.JSONValue;
@@ -53,7 +54,7 @@ public class BranchCoverageStepdefs {
     @Then("^the generated JSON should be:$")
     public void the_generated_JSON_should_be(String expectedJSON) throws IOException {
         StringWriter writer = new StringWriter();
-        new JsonGenerator().generate(data.getCoverageData(), writer);
+        new JsonGenerator(writer).generate(data.getCoverageData());
 
         Object expected = JSONValue.parse(expectedJSON);
         Object real = JSONValue.parse(writer.toString());
@@ -64,14 +65,14 @@ public class BranchCoverageStepdefs {
     @Then("^the generated XML should be:$")
     public void the_generated_XML_should_be(String expectedXML) throws IOException {
         StringWriter writer = new StringWriter();
-        new XmlGenerator().generate(data.getCoverageData(), writer);
+        new XmlGenerator(writer).generate(data.getCoverageData());
 
         assertEquals(expectedXML, writer.toString());
     }
 
     @When("^I ingest this JSON:$")
     public void I_ingest_this_JSON(String jsonToIngest) throws IOException {
-        CoverageData cd = new JsonGenerator().ingest(new StringReader(jsonToIngest));
+        CoverageData cd = new JsonIngester().ingest(new StringReader(jsonToIngest));
         data.setCoverageData(cd);
     }
 

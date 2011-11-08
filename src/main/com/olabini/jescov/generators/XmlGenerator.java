@@ -13,8 +13,14 @@ import com.olabini.jescov.FileCoverage;
 import com.olabini.jescov.LineCoverage;
 import com.olabini.jescov.BranchCoverage;
 
-public class XmlGenerator {
-    public void generate(CoverageData data, Writer writer) throws IOException {
+public class XmlGenerator implements Generator {
+    private final Writer writer;
+
+    public XmlGenerator(Writer writer) {
+        this.writer = writer;
+    }
+
+    public void generate(CoverageData data) throws IOException {
         writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
         writer.write("<!DOCTYPE coverage SYSTEM \"http://cobertura.sourceforge.net/xml/coverage-04.dtd\">\n");
         writer.write("<coverage line-rate=\"" + data.getLineRate() + "\" branch-rate=\"" + data.getBranchRate() + "\" lines-covered=\"" + data.getLinesCovered() + "\" lines-valid=\"" + data.getLinesValid() + "\" branches-covered=\"" + data.getBranchesCovered() + "\" branches-valid=\"" + data.getBranchesValid() + "\" complexity=\"0.0\" version=\"1.9.4.1\" timestamp=\"0\">\n");

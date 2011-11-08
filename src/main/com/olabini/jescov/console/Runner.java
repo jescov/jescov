@@ -3,11 +3,13 @@
  */
 package com.olabini.jescov.console;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 
+import com.olabini.jescov.Configuration;
 import com.olabini.jescov.Coverage;
 import com.olabini.jescov.CoverageData;
 import org.mozilla.javascript.Context;
@@ -17,6 +19,8 @@ import static com.olabini.jescov.Coverage.on;
 
 import com.olabini.jescov.generators.JsonGenerator;
 import com.olabini.jescov.generators.HtmlGenerator;
+import com.olabini.jescov.generators.CombinedGenerator;
+import com.olabini.jescov.generators.JsonIngester;
 
 /**
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
@@ -25,11 +29,13 @@ public class Runner {
     private final Context ctx;
     private final Scriptable scope;
     private final Coverage coverage;
+    private final Configuration configuration;
 
-    public Runner() {
+    public Runner(Configuration configuration) {
         ctx = Context.enter();
         scope = ctx.initStandardObjects();
-        coverage = on(ctx, scope);
+        this.configuration = configuration;
+        coverage = on(ctx, scope, configuration);
     }
 
     public CoverageData done() {
@@ -47,14 +53,24 @@ public class Runner {
     }
 
     public static void main(final String[] args) throws Exception {
-        Runner r = new Runner();
+        Configuration c = new Configuration();
+        String fileout = c.getJsonOutputFile();
+        FileWriter fw = new FileWriter(fileout);
+        c.setGenerator(new CombinedGenerator(new JsonGenerator(fw), new HtmlGenerator(c)));
+        Runner r = new Runner(c);
         for(String file : args) {
             r.executeReader(file, new FileReader(file));
         }
         CoverageData data = r.done();
-        FileWriter fw = new FileWriter("jescov.json.ser");
-        new JsonGenerator().generate(data, fw);
+
+        if(c.isJsonOutputMerge() && new File(fileout).exists()) {
+            FileReader fr = new FileReader(fileout);
+            CoverageData moreData = new JsonIngester().ingest(fr);
+            fr.close();
+            data = moreData.plus(data);
+        }
+        
+        c.getGenerator().generate(data);
         fw.close();
-        new HtmlGenerator().generate(data);
     }
 }// Runner
