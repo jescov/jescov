@@ -23,6 +23,7 @@
   </path>
 
   <path id="test.classpath">
+    <pathelement path="${basedir}"/>
     <path refid="libs.classpath"/>
     <pathelement path="${main.classes.dir}"/>
     <pathelement path="${test.classes.dir}"/>
