@@ -26,6 +26,9 @@ public class XmlGenerator implements Generator {
         writer.write("<coverage line-rate=\"" + data.getLineRate() + "\" branch-rate=\"" + data.getBranchRate() + "\" lines-covered=\"" + data.getLinesCovered() + "\" lines-valid=\"" + data.getLinesValid() + "\" branches-covered=\"" + data.getBranchesCovered() + "\" branches-valid=\"" + data.getBranchesValid() + "\" complexity=\"0.0\" version=\"1.9.4.1\" timestamp=\"0\">\n");
         writer.write("  <sources>\n");
         for(String fileName : data.getFileNames()) {
+            if (fileName.endsWith("(eval)")) {
+              continue;
+            }
             writer.write("    <source>"+fileName+"</source>\n");
         }
         writer.write("  </sources>\n");
@@ -33,6 +36,9 @@ public class XmlGenerator implements Generator {
         writer.write("    <package name=\"all\" line-rate=\"" + data.getLineRate() + "\" branch-rate=\"" + data.getBranchRate() + "\" complexity=\"0.0\">\n");
         writer.write("      <classes>\n");
         for(String fileName : data.getFileNames()) {
+            if (fileName.endsWith("(eval)")) {
+              continue;
+            }
             FileCoverage fc = data.getFileCoverageFor(fileName);
             writer.write("        <class name=\""+fileName+"\" filename=\""+fileName+"\" line-rate=\""+fc.getLineRate()+"\" branch-rate=\""+fc.getBranchRate()+"\" complexity=\"0.0\">\n");
             writer.write("          <methods>\n");

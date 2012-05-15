@@ -86,6 +86,9 @@ public class HtmlGenerator implements Generator {
 
         templateRight.add("fileAndCoverage", new FilesAndRelatedInformation(false, "All Files", data.getLinesValid(), data.getLinesCovered(), data.getBranchesValid(), data.getBranchesCovered()));
         for(String file : data.getFileNames()) {
+            if (file.endsWith("(eval)")) {
+              continue;
+            }
             FileCoverage fc = data.getFileCoverageFor(file);
             FilesAndRelatedInformation fari = new FilesAndRelatedInformation(true, file, fc.getLinesValid(), fc.getLinesCovered(), fc.getBranchesValid(), fc.getBranchesCovered());
             templateLeft.add("fileAndCoverage", fari);
@@ -109,6 +112,9 @@ public class HtmlGenerator implements Generator {
         STGroup g = new STGroupFile("templates/cobertura-html.stg");
 
         for(String file : data.getFileNames()) {
+            if (file.endsWith("(eval)")) {
+              continue;
+            }
             final ST template = g.getInstanceOf("file");
             generateFile(template, file, data.getFileCoverageFor(file));
         }
