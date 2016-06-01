@@ -1344,7 +1344,7 @@ ifStatement
 // The predicate is there just to get rid of the warning. ANTLR will handle the dangling else just fine.
 	: IF LPAREN expression RPAREN statement ( { input.LA(1) == ELSE }? elseStatement)?
 	//push the block wrap to the statement?
-	-> {instrument}? instrument_if(conditional = {$expression.text}, left = {$statement.text}, right = {$elseStatement.text}, hash = {$program::hash}, bid = {bid})
+	-> {instrument}? instrument_if(conditional = {$expression.text}, left = {wrapInBraces($statement.start, $statement.stop, input)}, right = {$elseStatement.text}, hash = {$program::hash}, bid = {bid})
     -> pass(stmt = {$text})
 	;
 

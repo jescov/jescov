@@ -42,6 +42,22 @@ Feature: Branch coverage of if statement
     Then the negative branch coverage on line 2 should be 1
     And the positive branch coverage on line 2 should be 0
 
+  Scenario: If block (without braces) is not executed when condition is false
+    When I execute this JavaScript:
+      """
+      function t1(res) {
+        var a = 0;
+        if(res)
+          a = 1;
+        if(a == 1) {
+          return 1;
+        }
+      }
+      t1(false);
+      """
+    Then the negative branch coverage on line 5 should be 1
+    And the positive branch coverage on line 5 should be 0
+
   Scenario: Only hits negative branch more than once
     When I execute this JavaScript:
       """
@@ -114,6 +130,24 @@ Feature: Branch coverage of if statement
       """
     Then the negative branch coverage on line 2 should be 1
     And the positive branch coverage on line 2 should be 0
+
+  Scenario: Else block (without braces) is not executed when condition is true
+    When I execute this JavaScript:
+      """
+      function t1(res) {
+        var a = 0;
+        if(res) {
+          a = 1;
+        } else
+          a = 2;
+        if(a == 2) {
+          return 2;
+        }
+      }
+      t1(true);
+      """
+    Then the negative branch coverage on line 7 should be 1
+    And the positive branch coverage on line 7 should be 0
 
   Scenario: Only hits negative branch more than once with else statement
     When I execute this JavaScript:

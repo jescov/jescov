@@ -31,6 +31,9 @@ public class JsonGenerator implements Generator {
     private Map convert(CoverageData data) {
         Map result = new HashMap();
         for(String file : data.getFileNames()) {
+            if (file.endsWith("(eval)")) {
+              continue;
+            }
             result.put(file, convert(data.getFileCoverageFor(file)));
         }
         return result;
